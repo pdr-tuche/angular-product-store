@@ -1,14 +1,19 @@
 {
   "products": [
     {
-      "id": 1,
-      "name": "Product 1",
-      "price": 100
+      "id": "1",
+      "name": "Formigueiro",
+      "price": "8"
     },
     {
-      "id": 2,
-      "name": "Product 2",
-      "price": 200
+      "id": "2",
+      "name": "Vulcão",
+      "price": "23"
+    },
+    {
+      "id": "9652",
+      "name": "Red Velvet",
+      "price": "120"
     }
   ]
 }

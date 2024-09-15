@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -9,17 +9,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Title } from '@angular/platform-browser';
+import { ProductsService } from '../../shared/services/products.service';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss',
 })
 export class CreateComponent {
+  productsService = inject(ProductsService);
+
   form = new FormGroup({
     title: new FormControl<string>('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    price: new FormControl<number>(0, {
       nonNullable: true,
       validators: Validators.required,
     }),
@@ -29,8 +41,14 @@ export class CreateComponent {
     if (this.form.invalid) {
       return;
     }
-
-    // console.log(this.form.value); //pegando como objeto
-    // console.log(this.form.controls.title.value); //pegando valor do campo
+    this.productsService
+      .post({
+        name: this.form.controls.title.value,
+        price: this.form.controls.price.value,
+      })
+      .subscribe(() => {
+        alert('Produto salvo com sucesso!');
+        this.form.reset();
+      });
   }
 }
