@@ -8,8 +8,9 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { Title } from '@angular/platform-browser';
 import { ProductsService } from '../../shared/services/products.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create',
@@ -25,6 +26,8 @@ import { ProductsService } from '../../shared/services/products.service';
 })
 export class CreateComponent {
   productsService = inject(ProductsService);
+  matSnackBar = inject(MatSnackBar);
+  router = inject(Router);
 
   form = new FormGroup({
     title: new FormControl<string>('', {
@@ -47,8 +50,8 @@ export class CreateComponent {
         price: this.form.controls.price.value,
       })
       .subscribe(() => {
-        alert('Produto salvo com sucesso!');
-        this.form.reset();
+        this.matSnackBar.open('Produto salvo com sucesso!', 'Fechar');
+        this.router.navigate(['/']);
       });
   }
 }
