@@ -1,19 +1,24 @@
 {
   "products": [
     {
-      "id": "1",
       "name": "Formigueiro",
-      "price": "8"
+      "price": "8",
+      "id": "1"
     },
     {
       "name": "Vulcão",
-      "price": "25",
+      "price": "23",
       "id": "2"
     },
     {
-      "id": "9652",
       "name": "Red Velvet",
-      "price": "120"
+      "price": "120",
+      "id": "9652"
+    },
+    {
+      "name": "Bolo Vegano com aveia",
+      "price": "21",
+      "id": "d14b"
     }
   ]
 }
