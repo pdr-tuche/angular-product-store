@@ -4,24 +4,40 @@ import { Product } from '../../shared/interfaces/product.interface';
 import { CardComponent } from './components/card/card.component';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirmation-dialog',
   template: `
-    <h2 mat-dialog-title>Delete file</h2>
+    <h2 mat-dialog-title>Deletar produto</h2>
     <mat-dialog-content>
-      Would you like to delete cat.jpeg?
+      Tem certeza que quer deletar esse produto?
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button mat-dialog-close>No</button>
-      <button mat-button mat-dialog-close cdkFocusInitial>Ok</button>
+      <button mat-button (click)="onNo()">Não</button>
+      <button mat-button color="accent" (click)="onYes()" cdkFocusInitial>
+        Sim
+      </button>
     </mat-dialog-actions>
   `,
   standalone: true,
   imports: [MatButtonModule, MatDialogModule],
 })
-export class ConfirmationDialogComponent {}
+export class ConfirmationDialogComponent {
+  matDialogRef = inject(MatDialogRef);
+
+  onNo() {
+    this.matDialogRef.close(false);
+  }
+
+  onYes() {
+    this.matDialogRef.close(true);
+  }
+}
 
 @Component({
   selector: 'app-list',
@@ -53,8 +69,17 @@ export class ListComponent {
     this.matDialog
       .open(ConfirmationDialogComponent)
       .afterClosed()
-      .subscribe((data) => {
-        console.log('afterclosed', data);
+      .subscribe((answer: boolean) => {
+        if (answer) {
+          this.productService.delete(product.id)
+          .subscribe(() => {
+            //recarregando a pagina
+            this.productService.getProducts()
+            .subscribe(products => {
+              this.products = products;
+            });
+          });
+        }
       });
   }
 }
