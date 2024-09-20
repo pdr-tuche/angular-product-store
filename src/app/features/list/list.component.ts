@@ -4,40 +4,7 @@ import { Product } from '../../shared/interfaces/product.interface';
 import { CardComponent } from './components/card/card.component';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-
-@Component({
-  selector: 'app-confirmation-dialog',
-  template: `
-    <h2 mat-dialog-title>Deletar produto</h2>
-    <mat-dialog-content>
-      Tem certeza que quer deletar esse produto?
-    </mat-dialog-content>
-    <mat-dialog-actions>
-      <button mat-button (click)="onNo()">Não</button>
-      <button mat-button color="accent" (click)="onYes()" cdkFocusInitial>
-        Sim
-      </button>
-    </mat-dialog-actions>
-  `,
-  standalone: true,
-  imports: [MatButtonModule, MatDialogModule],
-})
-export class ConfirmationDialogComponent {
-  matDialogRef = inject(MatDialogRef);
-
-  onNo() {
-    this.matDialogRef.close(false);
-  }
-
-  onYes() {
-    this.matDialogRef.close(true);
-  }
-}
+import { ConfirmationDialogService } from '../../shared/services/confirmation-dialog.service';
 
 @Component({
   selector: 'app-list',
@@ -53,7 +20,7 @@ export class ListComponent {
 
   router = inject(Router);
 
-  matDialog = inject(MatDialog);
+  confirmationService = inject(ConfirmationDialogService);
 
   ngOnInit() {
     this.productService.getProducts().subscribe((products) => {
@@ -62,20 +29,16 @@ export class ListComponent {
   }
 
   onEdit(product: Product) {
-    this.router.navigateByUrl(`/edit-product/${product.id}`);
+    this.router.navigateByUrl(`/edit-product/`);
   }
 
   onDelete(product: Product) {
-    this.matDialog
-      .open(ConfirmationDialogComponent)
-      .afterClosed()
+    this.confirmationService.openDialog()
       .subscribe((answer: boolean) => {
         if (answer) {
-          this.productService.delete(product.id)
-          .subscribe(() => {
+          this.productService.delete(product.id).subscribe(() => {
             //recarregando a pagina
-            this.productService.getProducts()
-            .subscribe(products => {
+            this.productService.getProducts().subscribe((products) => {
               this.products = products;
             });
           });
