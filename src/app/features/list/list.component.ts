@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ProductsService } from '../../shared/services/products.service';
 import { Product } from '../../shared/interfaces/product.interface';
 import { CardComponent } from './components/card/card.component';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { ConfirmationDialogService } from '../../shared/services/confirmation-dialog.service';
 
@@ -14,7 +14,7 @@ import { ConfirmationDialogService } from '../../shared/services/confirmation-di
   styleUrl: './list.component.scss',
 })
 export class ListComponent {
-  products: Product[] = [];
+  products = signal(inject(ActivatedRoute).snapshot.data['products']);
 
   productService = inject(ProductsService);
 
@@ -22,27 +22,20 @@ export class ListComponent {
 
   confirmationService = inject(ConfirmationDialogService);
 
-  ngOnInit() {
-    this.productService.getProducts().subscribe((products) => {
-      this.products = products;
-    });
-  }
-
   onEdit(product: Product) {
     this.router.navigateByUrl(`/edit-product/`);
   }
 
   onDelete(product: Product) {
-    this.confirmationService.openDialog()
-      .subscribe((answer: boolean) => {
-        if (answer) {
-          this.productService.delete(product.id).subscribe(() => {
-            //recarregando a pagina
-            this.productService.getProducts().subscribe((products) => {
-              this.products = products;
-            });
+    this.confirmationService.openDialog().subscribe((answer: boolean) => {
+      if (answer) {
+        this.productService.delete(product.id).subscribe(() => {
+          //recarregando a pagina
+          this.productService.getProducts().subscribe((products) => {
+            this.products.set(products);
           });
-        }
-      });
+        });
+      }
+    });
   }
 }

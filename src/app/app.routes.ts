@@ -13,6 +13,12 @@ import { Product } from './shared/interfaces/product.interface';
 export const routes: Routes = [
   {
     path: '',
+    resolve: {
+      products: () => {
+        const productsService = inject(ProductsService);
+        return productsService.getProducts();
+      }
+    },
     component: ListComponent,
   },
   {
