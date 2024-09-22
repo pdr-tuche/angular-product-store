@@ -23,7 +23,7 @@ export class ListComponent {
   confirmationService = inject(ConfirmationDialogService);
 
   onEdit(product: Product) {
-    this.router.navigateByUrl(`/edit-product/`);
+    this.router.navigateByUrl(`/edit-product/${product.id}`);
   }
 
   onDelete(product: Product) {
